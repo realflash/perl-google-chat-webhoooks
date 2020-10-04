@@ -1,0 +1,8 @@
+MANIFEST
+README
+LICENSE
+Todo
+Changes
+Makefile.PL
+lib/Google/Chat/WebHooks.pm
+t/001_load.t
