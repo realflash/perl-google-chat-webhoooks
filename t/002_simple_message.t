@@ -1,6 +1,6 @@
 use Test2::Bundle::More;
 use Test2::Tools::Class;
-use Test2::Tools::ClassicCompare;
+use Test2::Tools::ClassicCompare qw/is is_deeply isnt like unlike cmp_ok/;
 use Test2::Tools::Exception qw/dies lives/;
 use strict;
 use warnings;
@@ -28,7 +28,10 @@ my $room;
 ok(lives { $room = Google::Chat::WebHooks->new(room_webhook_url => $url); }, "Object created with valid URL");
 isa_ok($room, 'Google::Chat::WebHooks');
 my $response;
-ok(lives { $response = $room->simple_message("test"); }, "Simple message doesn't die");
-isnt($response, undef, "Method returns something");
+ok(lives { 
+	$response = $room->simple_message("test");
+	$response = undef unless $response;
+}, "Simple message doesn't die");
+ok(defined($response), "Method returns something");
 
 done_testing();
