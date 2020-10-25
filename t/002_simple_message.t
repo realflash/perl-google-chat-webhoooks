@@ -33,5 +33,6 @@ ok(lives {
 	$response = undef unless $response;
 }, "Simple message doesn't die");
 ok(defined($response), "Method returns something");
+isa_ok($response, 'HTTP::Response');
 
 done_testing();
