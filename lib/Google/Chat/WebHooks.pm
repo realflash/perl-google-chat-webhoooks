@@ -4,35 +4,51 @@ use warnings;
 use LWP::UserAgent;
 use Class::Tiny qw(room_webhook_url _ua);
 use Carp;
+use Test::HTTP::MockServer;
+
+my $server = Test::HTTP::MockServer->new();
+my $url = $server->url_base();
+# inject $url as the config for the remote http service.
+ 
+my $handle_request_phase1 = sub {
+    my ($request, $response) = @_;
+    ...
+};
+$server->start_mock_server($handle_request_phase1);
 
 BEGIN {
-    $VERSION     = '0.01';
+    our $VERSION     = '0.01';
 }
 
 sub BUILD
 {	
 	my ($self, $args) = @_;
 	
-	$self->_ua = LWP::UserAgent->new;
+	$self->_ua(LWP::UserAgent->new);
 	$self->_ua->timeout(10);
 	$self->_ua->env_proxy;
 	
 	croak "parameter 'room_webhook_url' must be supplied to new" unless $self->room_webhook_url;
 }
 
-#################### subroutine header end ####################
+sub simple_message($)
+{
+	my $msg = shift;
 
-			#~ my $msg_json = "{\"text\": \"$msg\"}";
-			#~ my $req = HTTP::Request->new('POST', $gc_hook);
-			#~ $req->header('Content-Type' => 'application/json');
-			#~ $req->content($msg_json);
-			#~ my $response = $ua->request($req);
-			#~ if($response->code !~ /^[2|3]/)
-			#~ {
-				#~ my $json = decode_json($response->decoded_content());
-				#~ print Dumper $json;
-				#~ exit 2;
-			#~ }
+	#~ my $msg_json = "{\"text\": \"$msg\"}";
+	#~ my $req = HTTP::Request->new('POST', $gc_hook);
+	#~ $req->header('Content-Type' => 'application/json');
+	#~ $req->content($msg_json);
+	#~ my $response = $ua->request($req);
+	#~ if($response->code !~ /^[2|3]/)
+	#~ {
+		#~ my $json = decode_json($response->decoded_content());
+		#~ print Dumper $json;
+		#~ exit 2;
+	#~ }
+	return "hello";
+
+}
 
 #################### main pod documentation begin ###################
 
