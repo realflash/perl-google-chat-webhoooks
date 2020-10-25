@@ -6,6 +6,7 @@ use strict;
 use warnings;
 use Google::Chat::WebHooks;
 use Test::HTTP::MockServer;
+use Data::Dumper;
  
 my $server = Test::HTTP::MockServer->new();
 my $url = $server->url_base();
@@ -33,6 +34,6 @@ ok(lives {
 	$response = undef unless $response;
 }, "Simple message doesn't die");
 ok(defined($response), "Method returns something");
-isa_ok($response, 'HTTP::Response');
+ok(ref($response) eq "HASH", "Method returns a hash ref");
 
 done_testing();

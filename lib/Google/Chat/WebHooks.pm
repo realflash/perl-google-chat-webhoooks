@@ -4,17 +4,6 @@ use warnings;
 use LWP::UserAgent;
 use Class::Tiny qw(room_webhook_url _ua);
 use Carp;
-use Test::HTTP::MockServer;
-
-my $server = Test::HTTP::MockServer->new();
-my $url = $server->url_base();
-# inject $url as the config for the remote http service.
- 
-my $handle_request_phase1 = sub {
-    my ($request, $response) = @_;
-    ...
-};
-$server->start_mock_server($handle_request_phase1);
 
 BEGIN {
     our $VERSION     = '0.01';
@@ -46,8 +35,7 @@ sub simple_message($)
 		#~ print Dumper $json;
 		#~ exit 2;
 	#~ }
-	return "hello";
-
+	return { result => 0, message => "success"};
 }
 
 #################### main pod documentation begin ###################
@@ -57,8 +45,8 @@ sub simple_message($)
   use Google::Chat::WebHooks;
 
   my $room = Google::Chat::WebHooks->new(room_webhook_url => 'https://chat.googleapis.com/v1/spaces/someid/messages?key=something&token=something');
-  $room->simple_text("This is a message");
-  $room->simple_text("Message with some *bold*");
+  my $result = $room->simple_text("This is a message");
+  $result = $room->simple_text("Message with some *bold*");
 
 =head1 DESCRIPTION
 
@@ -73,9 +61,13 @@ Just create an object, passing the webhook URL of the room to which you want to 
 
 Create a new instance of this class, passing in the webhook URL to send messages to. This argument is mandatory. Failure to set it upon creation will result in the method croaking. 
 
-=item simple_text(string)
+=item simple_message(string)
 
-Send a message to the room. L<Basic formatting is available|https://developers.google.com/hangouts/chat/how-tos/webhooks>.
+   my $result = $room->simple_text("This is a message");
+   $result->{'result'}; # 1 if success, 0 if not
+   $result->{'message'}; # "success" if result was 1, error message if not
+
+Send a message to the room. L<Basic formatting is available|https://developers.google.com/hangouts/chat/how-tos/webhooks>. Returns a hash ref.
 
 =item room_webhook_url(), room_webhook_url(value)
 
