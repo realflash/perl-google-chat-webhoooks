@@ -98,6 +98,7 @@ Send a message to the room. L<Basic formatting is available|https://developers.g
 Get/set the URL of the room. 
 
 =back
+
 =head1 BUGS & SUPPORT
 
 Please log them L<on GitHub|https://github.com/realflash/perl-google-chat-webhoooks/issues>.
