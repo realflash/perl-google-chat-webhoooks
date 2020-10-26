@@ -81,7 +81,6 @@ ok($response->{'message'} eq 'success', "Result message is correct") or note(dum
 $room->room_webhook_url("https://127.0.0.100:35723"); # hopefully nothing running here
 ok(lives { 
 	$response = $room->simple_message("test");
-	diag(dump($response));
 }, "Times out nicely when connection refused") or note($@);
 ok(defined($response), "Method returns something");
 ok(ref($response) eq "HASH", "Method returns a hash ref");
@@ -93,7 +92,6 @@ $room->room_webhook_url("https://192.0.2.0:35723"); # RFC5737 test addresses
 $room->timeout(3);
 ok(lives { 
 	$response = $room->simple_message("test");
-	diag(dump($response));
 }, "Times out nicely when connection refused") or note($@);
 ok(defined($response), "Method returns something");
 ok(ref($response) eq "HASH", "Method returns a hash ref");
