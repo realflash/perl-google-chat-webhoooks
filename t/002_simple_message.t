@@ -54,7 +54,9 @@ my $handle_request_phase1 = sub {
 							return;
 						}
 					}
-					diag(dump($json));
+					my $reply_json = encode_json({ "message" => "Faked server response. Try against the real thing to see a proepr response"});
+					$response->content(encode("utf8", $reply_json));
+					return;
 				}
 				else { $response->code("400"); $response->message("Bad Request"); }
 			}

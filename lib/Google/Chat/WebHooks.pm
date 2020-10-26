@@ -7,6 +7,7 @@ use Class::Tiny qw(room_webhook_url _ua timeout);
 use Carp;
 use JSON;
 use Try::Tiny;
+use Data::Validate::URI qw(is_uri);
 
 BEGIN {
     our $VERSION     = '0.01';
@@ -22,6 +23,7 @@ sub BUILD
 	$self->_ua->env_proxy;
 	
 	croak "parameter 'room_webhook_url' must be supplied to new" unless $self->room_webhook_url;
+	croak "Room URL is malformed" unless is_uri($self->room_webhook_url);
 }
 
 sub timeout
