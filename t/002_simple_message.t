@@ -7,15 +7,17 @@ use warnings;
 use Google::Chat::WebHooks;
 use Test::HTTP::MockServer;
 use Data::Dumper;
+use JSON;
  
 my $server = Test::HTTP::MockServer->new();
 my $url = $server->url_base();
+my $received_message;
  
 my $handle_request_phase1 = sub {
     my ($request, $response) = @_;
 		if($request->method eq "POST")
 		{
-			diag("Got POST request")
+			diag("Got POST request");
 		}
 		else
 		{
@@ -35,5 +37,7 @@ ok(lives {
 }, "Simple message doesn't die");
 ok(defined($response), "Method returns something");
 ok(ref($response) eq "HASH", "Method returns a hash ref");
+ok($response->{'result'} == 1, "Result was successful");
+ok($response->{'message'} eq 'success', "Result message is correct");
 
 done_testing();

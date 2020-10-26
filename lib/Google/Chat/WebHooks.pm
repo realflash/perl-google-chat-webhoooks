@@ -4,6 +4,7 @@ use warnings;
 use LWP::UserAgent;
 use Class::Tiny qw(room_webhook_url _ua);
 use Carp;
+use JSON;
 
 BEGIN {
     our $VERSION     = '0.01';
@@ -22,20 +23,21 @@ sub BUILD
 
 sub simple_message($)
 {
+	my $self = shift;
 	my $msg = shift;
 
-	#~ my $msg_json = "{\"text\": \"$msg\"}";
-	#~ my $req = HTTP::Request->new('POST', $gc_hook);
-	#~ $req->header('Content-Type' => 'application/json');
-	#~ $req->content($msg_json);
-	#~ my $response = $ua->request($req);
-	#~ if($response->code !~ /^[2|3]/)
-	#~ {
-		#~ my $json = decode_json($response->decoded_content());
-		#~ print Dumper $json;
-		#~ exit 2;
-	#~ }
-	return { result => 0, message => "success"};
+	my $msg_json = "{\"text\": \"$msg\"}";
+	my $req = HTTP::Request->new('POST', $self->room_webhook_url);
+	$req->header('Content-Type' => 'application/json');
+	$req->content($msg_json);
+	my $response = $self->_ua->request($req);
+	if($response->code !~ /^[2|3]/)
+	{
+		my $json = decode_json($response->decoded_content());
+		my $error_message = "";
+		return { result => 0, message => $error_message};
+	}
+	return { result => 1, message => "success"};
 }
 
 #################### main pod documentation begin ###################
