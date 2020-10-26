@@ -70,12 +70,34 @@ isa_ok($room, 'Google::Chat::WebHooks');
 my $response;
 ok(lives {
 	$response = $room->simple_message("test");
-	diag(dump($response));
 	$response = undef unless $response;
 }, "Simple message doesn't die") or note($@);
 ok(defined($response), "Method returns something");
 ok(ref($response) eq "HASH", "Method returns a hash ref");
 ok($response->{'result'} == 1, "Result was successful") or note(dump($response));
 ok($response->{'message'} eq 'success', "Result message is correct") or note(dump($response));
+
+# Connection refused
+$room->room_webhook_url("https://127.0.0.100:35723"); # hopefully nothing running here
+ok(lives { 
+	$response = $room->simple_message("test");
+	diag(dump($response));
+}, "Times out nicely when connection refused") or note($@);
+ok(defined($response), "Method returns something");
+ok(ref($response) eq "HASH", "Method returns a hash ref");
+ok($response->{'result'} == 0, "Result was unsuccessful") or note(dump($response));
+ok(defined($response->{'message'}), "Result has a message") or note(dump($response));
+
+# Server not responding
+$room->room_webhook_url("https://192.0.2.0:35723"); # RFC5737 test addresses
+$room->timeout(3);
+ok(lives { 
+	$response = $room->simple_message("test");
+	diag(dump($response));
+}, "Times out nicely when connection refused") or note($@);
+ok(defined($response), "Method returns something");
+ok(ref($response) eq "HASH", "Method returns a hash ref");
+ok($response->{'result'} == 0, "Result was unsuccessful") or note(dump($response));
+ok(defined($response->{'message'}), "Result has a message") or note(dump($response));
 
 done_testing();

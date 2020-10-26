@@ -2,9 +2,11 @@ package Google::Chat::WebHooks;
 use strict;
 use warnings;
 use LWP::UserAgent;
-use Class::Tiny qw(room_webhook_url _ua);
+use subs 'timeout';
+use Class::Tiny qw(room_webhook_url _ua timeout);
 use Carp;
 use JSON;
+use Try::Tiny;
 
 BEGIN {
     our $VERSION     = '0.01';
@@ -22,6 +24,15 @@ sub BUILD
 	croak "parameter 'room_webhook_url' must be supplied to new" unless $self->room_webhook_url;
 }
 
+sub timeout
+{
+	my $self = shift;
+    if (@_) {
+		$self->_ua->timeout(shift);
+    }
+	return $self->_ua->timeout;
+}
+
 sub simple_message($)
 {
 	my $self = shift;
@@ -32,10 +43,14 @@ sub simple_message($)
 	$req->header('Content-Type' => 'application/json');
 	$req->content($msg_json);
 	my $response = $self->_ua->request($req);
-	if($response->code !~ /^[2|3]/)
+	if($response->is_error)
 	{
-		my $content =  $response->decoded_content();
-		my $json = decode_json($content);
+		my $content = $response->decoded_content();
+		my $json;
+		try
+		{
+			$json = decode_json($content);
+		};
 		my $error_message = $response->code." ".$response->message;
 		return { result => 0, message => $error_message, detail => $response->decoded_content};
 	}
@@ -62,8 +77,11 @@ Just create an object, passing the webhook URL of the room to which you want to 
 
 =over 3
 =item new(room_webhook_url => value)
+=item new(room_webhook_url => value, timeout => integer)
 
-Create a new instance of this class, passing in the webhook URL to send messages to. This argument is mandatory. Failure to set it upon creation will result in the method croaking. 
+Create a new instance of this class, passing in the webhook URL to send messages to. This argument is mandatory. Failure to set it upon creation will result in the method croaking.
+
+Optionally also set the connect timeout in seconds. Default value is 10.  
 
 =item simple_message(string)
 
