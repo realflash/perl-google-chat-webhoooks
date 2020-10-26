@@ -9,6 +9,7 @@ use JSON;
 BEGIN {
     our $VERSION     = '0.01';
 }
+my $DIAG = 1;
 
 sub BUILD
 {	
@@ -31,12 +32,18 @@ sub simple_message($)
 	$req->header('Content-Type' => 'application/json');
 	$req->content($msg_json);
 	my $response = $self->_ua->request($req);
+	print STDERR "2" if $DIAG;
 	if($response->code !~ /^[2|3]/)
 	{
-		my $json = decode_json($response->decoded_content());
+		print STDERR "3" if $DIAG;
+		my $content =  $response->decoded_content();
+		print STDERR "4" if $DIAG;
+		my $json = decode_json($content);
+		print STDERR "5" if $DIAG;
 		my $error_message = "";
 		return { result => 0, message => $error_message};
 	}
+	print STDERR "6" if $DIAG;
 	return { result => 1, message => "success"};
 }
 
