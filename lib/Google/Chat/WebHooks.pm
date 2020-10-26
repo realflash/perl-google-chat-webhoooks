@@ -32,18 +32,13 @@ sub simple_message($)
 	$req->header('Content-Type' => 'application/json');
 	$req->content($msg_json);
 	my $response = $self->_ua->request($req);
-	print STDERR "2" if $DIAG;
 	if($response->code !~ /^[2|3]/)
 	{
-		print STDERR "3" if $DIAG;
 		my $content =  $response->decoded_content();
-		print STDERR "4" if $DIAG;
 		my $json = decode_json($content);
-		print STDERR "5" if $DIAG;
-		my $error_message = "";
-		return { result => 0, message => $error_message};
+		my $error_message = $response->code." ".$response->message;
+		return { result => 0, message => $error_message, detail => $response->decoded_content};
 	}
-	print STDERR "6" if $DIAG;
 	return { result => 1, message => "success"};
 }
 
