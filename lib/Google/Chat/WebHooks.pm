@@ -10,7 +10,7 @@ use Try::Tiny;
 use Data::Validate::URI qw(is_uri);
 
 BEGIN {
-    our $VERSION     = '0.02';
+    our $VERSION     = '0.3';
 }
 my $DIAG = 1;
 
