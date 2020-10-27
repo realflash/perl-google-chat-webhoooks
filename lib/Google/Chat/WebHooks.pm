@@ -78,7 +78,9 @@ Google::Chat::WebHooks - Send notifications to Google Chat Rooms as provided by 
 Just create an object, passing the webhook URL of the room to which you want to send notifications. Then fire away. If you need help setting up a webhook for your room, see L<https://developers.google.com/hangouts/chat/how-tos/webhooks>.
 
 =over 3
+
 =item new(room_webhook_url => value)
+
 =item new(room_webhook_url => value, timeout => integer)
 
 Create a new instance of this class, passing in the webhook URL to send messages to. This argument is mandatory. Failure to set it upon creation will result in the method croaking.
