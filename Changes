@@ -1,5 +1,11 @@
 Revision history for Perl module Google::Chat::WebHooks
 
+0.3  Tue Oct 27 12:04:00 2020
+    - Added module dependencies. POD fixes for better formatting.
+
+0.02 Mon Oct 26 15:59:30 2020
+    - All functionality and documentation finished. Released.
+
 0.01 Sun Oct  4 16:35:06 2020
     - original version; created by ExtUtils::ModuleMaker 0.63
 
